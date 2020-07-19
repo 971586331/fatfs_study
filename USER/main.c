@@ -8,57 +8,58 @@
 #include "malloc.h"  
 #include "MMC_SD.h" 
 #include "ff.h"  
-#include "exfuns.h"
-//ALIENTEK Mini STM32开发板范例代码29
-//FATFS 实验  
-//技术支持：www.openedv.com
-//广州市星翼电子科技有限公司  
+#include "exfuns.h" 
  
  int main(void)
  { 
- 	u32 total,free;
-	u8 t=0;		  
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);// 设置中断优先级分组2 
-	delay_init();	    	 //延时函数初始化	  
-	uart_init(9600);	 	//串口初始化为9600
- 	exfuns_init();		//为fatfs相关变量申请内存				 
-	LCD_Init();			//初始化液晶 
-	LED_Init();         //LED初始化	 													    
-	usmart_dev.init(72);	
- 	mem_init();			//初始化内存池	
+	 FATFS fs[2];
+	int rc = 0;
+	 int t = 0;
+	 
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+	delay_init();	    	 
+	uart_init(9600);	 
+	LED_Init();        										    
 
- 	POINT_COLOR=RED;//设置字体为红色	   
-	LCD_ShowString(60,50,200,16,16,"Mini STM32");	
-	LCD_ShowString(60,70,200,16,16,"FATFS TEST");	
-	LCD_ShowString(60,90,200,16,16,"ATOM@ALIENTEK");
-	LCD_ShowString(60,110,200,16,16,"Use USMART for test");	  
-	LCD_ShowString(60,130,200,16,16,"2014/3/14");	  
+	 printf("SD_Initialize\r\n");	
 
-	while(SD_Initialize())					//检测SD卡
+	while(SD_Initialize())				
 	{
-		LCD_ShowString(60,150,200,16,16,"SD Card Error!");
 		delay_ms(200);
-		LCD_Fill(60,150,240,150+16,WHITE);//清除显示			  
-		delay_ms(200);
-		LED0=!LED0;//DS0闪烁
+		LED0=!LED0;
 	}								   	
- 	exfuns_init();							//为fatfs相关变量申请内存				 
-  	f_mount(fs[0],"0:",1); 					//挂载SD卡 
- 	f_mount(fs[1],"1:",1); 					//挂载FLASH.	  
-	while(exf_getfree("0",&total,&free))	//得到SD卡的总容量和剩余容量
-	{
-		LCD_ShowString(60,150,200,16,16,"Fatfs Error!");
-		delay_ms(200);
-		LCD_Fill(60,150,240,150+16,WHITE);//清除显示			  
-		delay_ms(200);
-		LED0=!LED0;//DS0闪烁
-	}													 
- 	POINT_COLOR=BLUE;//设置字体为蓝色	   
-	LCD_ShowString(60,150,200,16,16,"FATFS OK!");	 
-	LCD_ShowString(60,170,200,16,16,"SD Total Size:     MB");	 
-	LCD_ShowString(60,190,200,16,16,"SD  Free Size:     MB"); 	    
- 	LCD_ShowNum(172,170,total>>10,5,16);					//显示SD卡总容量 MB
- 	LCD_ShowNum(172,190,free>>10,5,16);						//显示SD卡剩余容量 MB			    
+  rc = f_mount(&fs[0],"0:",1); 					
+	printf("f_mount = %d\r\n", rc);
+ 	rc = f_mount(&fs[1],"1:",1); 				
+	printf("f_mount = %d\r\n", rc);											 
+	
+	FIL fil;
+	char buf[20];
+	UINT bw;
+	UINT br;
+	
+	printf("open or create file\r\n");
+	rc = f_open(&fil, "0:/fatfs4.txt", FA_WRITE | FA_CREATE_ALWAYS);
+	printf("rc = %d\r\n", rc);
+
+	printf("write file\r\n");
+	rc = f_write(&fil, "HelloWorld\r\n", 12, &bw);
+	printf("rc = %d\r\n", rc);
+
+	printf("%d bytes writen\r\n", bw); 
+	rc = f_close(&fil);
+	printf("rc = %d\r\n", rc);
+
+	rc = f_open(&fil, "0:/fatfs4.txt", FA_READ);
+	printf("rc = %d\r\n", rc);
+
+	rc = f_read(&fil, buf, 12, &br);
+	printf("rc = %d\r\n", rc);
+	printf("%s", buf);
+			
+	rc = f_close(&fil);
+	printf("rc = %d\r\n", rc);
+		
 	while(1)
 	{
 		t++;
