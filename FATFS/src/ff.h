@@ -72,17 +72,17 @@ typedef char TCHAR;
 
 
 
-/* File system object structure (FATFS) */
+/* File system object structure (FATFS) 文件系统对象结构 */
 
 typedef struct {
-	BYTE	fs_type;		/* FAT sub-type (0:Not mounted) */
-	BYTE	drv;			/* Physical drive number */
-	BYTE	csize;			/* Sectors per cluster (1,2,4...128) */
-	BYTE	n_fats;			/* Number of FAT copies (1 or 2) */
+	BYTE	fs_type;		/* FAT sub-type (0:Not mounted) FAT子类型（0：未安装） */
+	BYTE	drv;			/* Physical drive number 物理驱动器号 */
+	BYTE	csize;			/* Sectors per cluster (1,2,4...128) 每个集群的部门 */
+	BYTE	n_fats;			/* Number of FAT copies (1 or 2) FAT副本数 */
 	BYTE	wflag;			/* win[] flag (b0:dirty) */
 	BYTE	fsi_flag;		/* FSINFO flags (b7:disabled, b0:dirty) */
 	WORD	id;				/* File system mount ID */
-	WORD	n_rootdir;		/* Number of root directory entries (FAT12/16) */
+	WORD	n_rootdir;		/* Number of root directory entries (FAT12/16) 根目录中的目录项项数 */
 #if _MAX_SS != _MIN_SS
 	WORD	ssize;			/* Bytes per sector (512, 1024, 2048 or 4096) */
 #endif
@@ -90,20 +90,20 @@ typedef struct {
 	_SYNC_t	sobj;			/* Identifier of sync object */
 #endif
 #if !_FS_READONLY
-	DWORD	last_clust;		/* Last allocated cluster */
-	DWORD	free_clust;		/* Number of free clusters */
+	DWORD	last_clust;		/* Last allocated cluster 最后分配的簇 */
+	DWORD	free_clust;		/* Number of free clusters 空闲的簇数量 */
 #endif
 #if _FS_RPATH
 	DWORD	cdir;			/* Current directory start cluster (0:root) */
 #endif
-	DWORD	n_fatent;		/* Number of FAT entries (= number of clusters + 2) */
-	DWORD	fsize;			/* Sectors per FAT */
-	DWORD	volbase;		/* Volume start sector */
-	DWORD	fatbase;		/* FAT start sector */
-	DWORD	dirbase;		/* Root directory start sector (FAT32:Cluster#) */
-	DWORD	database;		/* Data start sector */
-	DWORD	winsect;		/* Current sector appearing in the win[] */
-	BYTE	win[_MAX_SS];	/* Disk access window for Directory, FAT (and file data at tiny cfg) */
+	DWORD	n_fatent;		/* Number of FAT entries (= number of clusters + 2) FAT条目数（=簇数+ 2） */
+	DWORD	fsize;			/* Sectors per FAT FAT中的扇区 */
+	DWORD	volbase;		/* Volume start sector 开始扇区容量 */
+	DWORD	fatbase;		/* FAT start sector FAT起始扇区 */
+	DWORD	dirbase;		/* Root directory start sector (FAT32:Cluster#) 根目录开始扇区 */
+	DWORD	database;		/* Data start sector 数据起始扇区 */
+	DWORD	winsect;		/* Current sector appearing in the win[] 当前扇区出现在那一个win中 */
+	BYTE	win[_MAX_SS];	/* Disk access window for Directory, FAT (and file data at tiny cfg) 目录，FAT（和位于cfg的文件数据）的磁盘访问窗口 */
 } FATFS;
 
 

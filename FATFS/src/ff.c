@@ -2155,7 +2155,7 @@ BYTE check_fs (	/* 0:FAT boor sector, 1:Valid boor sector but not FAT, 2:Not a b
 
 
 /*-----------------------------------------------------------------------*/
-/* Find logical drive and check if the volume is mounted                 */
+/* Find logical drive and check if the volume is mounted 查找逻辑驱动器并检查是否已安装卷  */
 /*-----------------------------------------------------------------------*/
 
 static
@@ -2375,7 +2375,7 @@ FRESULT f_mount (
 	const TCHAR *rp = path;
 
 
-	vol = get_ldnumber(&rp);
+	vol = get_ldnumber(&rp);	//获得：前的数字
 	if (vol < 0) return FR_INVALID_DRIVE;
 	cfs = FatFs[vol];					/* Pointer to fs object */
 
@@ -2395,7 +2395,7 @@ FRESULT f_mount (
 		if (!ff_cre_syncobj((BYTE)vol, &fs->sobj)) return FR_INT_ERR;
 #endif
 	}
-	FatFs[vol] = fs;					/* Register new fs object */
+	FatFs[vol] = fs;					/* Register new fs object 注册一个文件系统对象 */
 
 	if (!fs || opt != 1) return FR_OK;	/* Do not mount now, it will be mounted later */
 
